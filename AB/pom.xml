@@ -6,7 +6,11 @@
 
     <groupId>org.maktabHW11</groupId>
     <artifactId>HW11</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>onlineShop</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

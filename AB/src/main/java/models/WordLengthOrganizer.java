@@ -37,14 +37,14 @@ public class WordLengthOrganizer {
 
         mappedWithLength.forEach((length, name) -> System.out.println("length: " + length + " :" + name));
 
-        Map<Long, Map<Integer, List<String>>> mappedWithCount = names
+        /*Map<Long, Map<Integer, List<String>>> mappedWithCount = names
                 .stream()
                 .collect(
                         Collectors
                                 .groupingBy(String::length,
                                 groupingBy(String::length,counting())
                         )
-                );
+                );*/
 
         /*employeesList.stream()
                 .collect(
@@ -56,14 +56,5 @@ public class WordLengthOrganizer {
                         )
                 );*/
 
-        mappedWithCount.forEach((count, map) -> {
-            System.out.println(count + " " + map);
-        });
-
-
-/*
-        mappedWithLength.forEach((length,list) -> mappedWithCount.put(list.size(),list));
-
-        mappedWithCount.forEach((count,list) -> System.out.println(count + " " +  list));*/
     }
 }

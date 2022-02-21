@@ -40,9 +40,9 @@ public class WordLengthOrganizer {
         Map<Long, Map<Integer, List<String>>> mappedWithCount = names
                 .stream()
                 .collect(
-                        Collectors.groupingByConcurrent(
-                                Collectors.groupingBy(String::length),
-                                counting()
+                        Collectors
+                                .groupingBy(String::length,
+                                groupingBy(String::length,counting())
                         )
                 );
 

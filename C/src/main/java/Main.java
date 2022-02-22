@@ -74,7 +74,4 @@ public class Main {
         return input.getYear() == toCheck.getYear() && input.getMonth() == toCheck.getMonth() && input.getDay() == toCheck.getDay();
     }
 
-    public static long average(HashMap<Product,Integer> products){
-
-    }
 }

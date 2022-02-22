@@ -98,6 +98,16 @@ public class ClerkRep extends BaseRepository<Clerk> implements Repository<Clerk>
         }
         return null;
     }
+    public List<Clerk> readAll(){
+        String readStmt = "SELECT * FROM clerks;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            return mapToList(ps.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public Integer update(Clerk clerk) {
@@ -119,6 +129,15 @@ public class ClerkRep extends BaseRepository<Clerk> implements Repository<Clerk>
 
     @Override
     public Integer delete(Clerk clerk) {
+        String delStmt = "DELETE FROM clerks WHERE clerk_id = ?;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
+            ps.setInt(1,clerk.getId());
+            ps.executeUpdate();
+            return clerk.getId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

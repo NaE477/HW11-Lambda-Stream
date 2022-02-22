@@ -1,6 +1,7 @@
 package repos;
 
 import models.things.Course;
+import models.users.Clerk;
 import models.users.ProfPosition;
 import models.users.Professor;
 
@@ -87,13 +88,41 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
         return null;
     }
 
+    public Integer insWithoutProf(Course course) {
+        String insStmt = "INSERT INTO courses (course_name, course_unit) " +
+                "VALUES (?,?) RETURNING course_id;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(insStmt);
+            ps.setString(1, course.getCourseName());
+            ps.setInt(2, course.getUnits());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("course_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public Course read(Integer id) {
         String readStmt = "SELECT * FROM courses WHERE course_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
-            ps.setInt(1,id);
+            ps.setInt(1, id);
             return mapTo(ps.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Course> readAll() {
+        String readStmt = "SELECT * FROM courses;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            return mapToList(ps.executeQuery());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -105,10 +134,10 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
         String upStmt = "UPDATE courses SET course_name = ?,course_unit = ?,prof_id = ? WHERE course_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(upStmt);
-            ps.setString(1,course.getCourseName());
-            ps.setInt(2,course.getUnits());
-            ps.setInt(3,course.getProfessor().getId());
-            ps.setInt(4,course.getId());
+            ps.setString(1, course.getCourseName());
+            ps.setInt(2, course.getUnits());
+            ps.setInt(3, course.getProfessor().getId());
+            ps.setInt(4, course.getId());
             ps.executeUpdate();
             return course.getId();
         } catch (SQLException e) {
@@ -122,7 +151,7 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
         String delStmt = "DELETE FROM courses WHERE course_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
-            ps.setInt(1,course.getId());
+            ps.setInt(1, course.getId());
             ps.executeUpdate();
             return course.getId();
         } catch (SQLException e) {

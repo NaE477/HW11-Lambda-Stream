@@ -60,10 +60,10 @@ public class StudentRep extends BaseRepository<Student> implements Repository<St
                 "VALUES (?,?,?,?) RETURNING student_id;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(insStmt);
-            ps.setString(1,student.getFirstname());
-            ps.setString(2,student.getLastname());
-            ps.setString(3,student.getUsername());
-            ps.setString(4,student.getPassword());
+            ps.setString(1, student.getFirstname());
+            ps.setString(2, student.getLastname());
+            ps.setString(3, student.getUsername());
+            ps.setString(4, student.getPassword());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt("student_id");
@@ -79,19 +79,31 @@ public class StudentRep extends BaseRepository<Student> implements Repository<St
         String readStmt = "SELECT * FROM students WHERE student_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
-            ps.setInt(1,id);
+            ps.setInt(1, id);
             return mapTo(ps.executeQuery());
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-    public Student read(String username){
+
+    public Student read(String username) {
         String readStmt = "SELECT * FROM students WHERE student_username = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
-            ps.setString(1,username);
-            return  mapTo(ps.executeQuery());
+            ps.setString(1, username);
+            return mapTo(ps.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Student> readAll() {
+        String readStmt = "SELECT * FROM students;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            return mapToList(ps.executeQuery());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -103,11 +115,11 @@ public class StudentRep extends BaseRepository<Student> implements Repository<St
         String upStmt = "UPDATE students SET student_firstname = ?,student_lastname = ?,student_username = ?,student_password = ? WHERE student_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(upStmt);
-            ps.setString(1,student.getFirstname());
-            ps.setString(2,student.getLastname());
-            ps.setString(3,student.getUsername());
-            ps.setString(4,student.getPassword());
-            ps.setInt(5,student.getId());
+            ps.setString(1, student.getFirstname());
+            ps.setString(2, student.getLastname());
+            ps.setString(3, student.getUsername());
+            ps.setString(4, student.getPassword());
+            ps.setInt(5, student.getId());
             ps.executeUpdate();
             return student.getId();
         } catch (SQLException e) {
@@ -121,7 +133,7 @@ public class StudentRep extends BaseRepository<Student> implements Repository<St
         String delStmt = "DELETE FROM students WHERE student_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
-            ps.setInt(1,student.getId());
+            ps.setInt(1, student.getId());
             ps.executeUpdate();
             return student.getId();
         } catch (SQLException e) {

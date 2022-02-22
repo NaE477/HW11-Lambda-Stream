@@ -4,6 +4,7 @@ import models.users.Student;
 import repos.StudentRep;
 
 import java.sql.Connection;
+import java.util.List;
 
 public class StudentService extends BaseService {
     private final StudentRep studentRep;
@@ -22,7 +23,10 @@ public class StudentService extends BaseService {
     public Student find(String username){
         return studentRep.read(username);
     }
-    public Integer update(Student student){
+    public List<Student> findAll(){
+        return studentRep.readAll();
+    }
+    public Integer editProfile(Student student){
         return studentRep.update(student);
     }
     public Integer delete(Student student){

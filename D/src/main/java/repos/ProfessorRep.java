@@ -101,6 +101,16 @@ public class ProfessorRep extends BaseRepository<Professor> implements Repositor
         }
         return null;
     }
+    public List<Professor> readAll(){
+        String readStmt = "SELECT * FROM professors;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            return mapToList(ps.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public Integer update(Professor professor) {

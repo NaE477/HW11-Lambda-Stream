@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Student extends User{
-    List<Course> courses;
+    private List<Course> courses;
 
     public Student(Integer studentId,String firstname,String lastname,String username,String password){
         super(studentId,firstname,lastname,username,password);

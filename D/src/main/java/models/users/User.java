@@ -8,8 +8,8 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 public abstract class User {
-    Integer id;
-    String firstname,lastname,username,password;
+    private Integer id;
+    private String firstname,lastname,username,password;
 
     @Override
     public boolean equals(Object o) {

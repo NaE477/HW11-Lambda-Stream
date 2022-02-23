@@ -1,8 +1,6 @@
 import java.sql.Date;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,6 +21,7 @@ public class Main {
         Order order1 = new Order(1, new Date(2021 - 1900, 2, 3), customer1, OrderStatus.DONE);
         Order order2 = new Order(2, new Date(2021 - 1900, 2, 4), customer2, OrderStatus.PENDING);
         Order order3 = new Order(3, new Date(2021 - 1900, 2, 1), customer3, OrderStatus.DONE);
+
         Order order4 = new Order(4, new Date(2021 - 1900, 2, 5), customer3, OrderStatus.DONE);
         Order order5 = new Order(5, new Date(2021 - 1900, 2, 5), customer2, OrderStatus.DONE);
         Order order6 = new Order(6, new Date(2021 - 1900, 2, 5), customer1, OrderStatus.DONE);
@@ -30,6 +29,9 @@ public class Main {
         List<Order> orders = new ArrayList<>(Arrays.asList(order1, order2, order3, order4, order5, order6));
 
 
+
+        HashMap<Product, Integer> order1Products = new HashMap<>();
+        order1Products.put(tv,8);
         HashMap<Product, Integer> order4Products = new HashMap<>();
         order4Products.put(pc, 4);
         HashMap<Product, Integer> order5Products = new HashMap<>();
@@ -37,11 +39,12 @@ public class Main {
         HashMap<Product, Integer> order6Products = new HashMap<>();
         order6Products.put(pants, 2);
 
+        OrderDetails orderDetails1 = new OrderDetails(order1,order1Products);
         OrderDetails orderDetails4 = new OrderDetails(order4, order4Products);
         OrderDetails orderDetails5 = new OrderDetails(order5, order5Products);
         OrderDetails orderDetails6 = new OrderDetails(order6, order6Products);
 
-        List<OrderDetails> orderDetails = new ArrayList<>(Arrays.asList(orderDetails4, orderDetails5, orderDetails6));
+        List<OrderDetails> orderDetails = new ArrayList<>(Arrays.asList(orderDetails1,orderDetails4, orderDetails5, orderDetails6));
 
         //1-
         products
@@ -62,7 +65,12 @@ public class Main {
         System.out.println(minPriceProduct);
 
         //4-
-
+        OptionalDouble averageOfDay = orderDetails
+                .stream()
+                .filter(od -> equalsDate(od.getOrder().getOrderDate(),new Date(2021-1900,2,5)))
+                .mapToDouble(od -> orderPriceCalc(od.getProducts()))
+                .average();
+        System.out.println("Average Order on this day: " + averageOfDay.orElse(-1));
     }
 
     public static boolean isWithinRange(Date date) {
@@ -72,6 +80,13 @@ public class Main {
 
     public static boolean equalsDate(Date input, Date toCheck) {
         return input.getYear() == toCheck.getYear() && input.getMonth() == toCheck.getMonth() && input.getDay() == toCheck.getDay();
+    }
+
+    public static Double orderPriceCalc(HashMap<Product, Integer> products) {
+        AtomicReference<Double> avg = new AtomicReference<>(0.d);
+        products.entrySet()
+                .forEach((product -> avg.updateAndGet(v -> v + product.getKey().getPrice() * product.getValue())));
+        return avg.get();
     }
 
 }

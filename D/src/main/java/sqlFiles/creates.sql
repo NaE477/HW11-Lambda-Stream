@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS courses
     course_name VARCHAR(50),
     course_unit INTEGER,
     prof_id     INTEGER,
+    term        INTEGER,
 
     FOREIGN KEY (prof_id) REFERENCES professors(prof_id)
 );
@@ -45,4 +46,9 @@ CREATE TABLE IF NOT EXISTS course_to_student
 
     FOREIGN KEY (course_id) REFERENCES courses(course_id),
     FOREIGN KEY (student_id) REFERENCES students(student_id)
+);
+
+CREATE TABLE IF NOT EXISTS term
+(
+    term    INTEGER
 );

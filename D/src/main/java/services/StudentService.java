@@ -1,5 +1,6 @@
 package services;
 
+import models.things.Course;
 import models.users.Student;
 import repos.StudentRep;
 
@@ -25,6 +26,9 @@ public class StudentService extends BaseService {
     }
     public List<Student> findAll(){
         return studentRep.readAll();
+    }
+    public List<Student> findAll(Course course){
+        return studentRep.readAll(course);
     }
     public Integer editProfile(Student student){
         return studentRep.update(student);

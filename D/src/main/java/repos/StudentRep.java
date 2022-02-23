@@ -1,5 +1,6 @@
 package repos;
 
+import models.things.Course;
 import models.users.Student;
 
 import java.sql.Connection;
@@ -103,6 +104,19 @@ public class StudentRep extends BaseRepository<Student> implements Repository<St
         String readStmt = "SELECT * FROM students;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            return mapToList(ps.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public List<Student> readAll(Course course){
+        String readStmt = "SELECT students.* FROM students " +
+                "INNER JOIN course_to_student cts on students.student_id = cts.student_id " +
+                "WHERE cts.course_id = ?;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            ps.setInt(1,course.getId());
             return mapToList(ps.executeQuery());
         } catch (SQLException e) {
             e.printStackTrace();

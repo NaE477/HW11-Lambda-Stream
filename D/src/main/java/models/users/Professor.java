@@ -21,26 +21,6 @@ public class Professor extends User {
         return "ID: " + super.getId() +
                 " ,Full Name: " + super.getFirstname() + " " + super.getLastname() +
                 " ,Username: " + super.getUsername() +
-                " ,Position: " + profPosition.toString() +
-                " ,Salary: " + getSalary();
-    }
-
-    private Double getSalary() {
-        double salary = 0;
-        if (profPosition.equals(ProfPosition.NC)) {
-            if (courses.size() > 0) {
-                for (Course course : courses) {
-                    salary += course.getUnits() * 1000000.0;
-                }
-            }
-        } else {
-            if (courses.size() > 0) {
-                for (Course course : courses) {
-                    salary += course.getUnits() * 1000000.0;
-                }
-            }
-            salary += 5000000.0;
-        }
-        return salary;
+                " ,Position: " + profPosition.toString();
     }
 }

@@ -4,6 +4,7 @@ import models.things.Course;
 import models.users.Student;
 import services.CourseService;
 import services.StudentService;
+import services.TermService;
 
 import java.sql.Connection;
 import java.util.*;
@@ -13,13 +14,17 @@ import java.util.stream.Collectors;
 public class StudentController {
     private final StudentService studentService;
     private final CourseService courseService;
+    private final TermService termService;
     private final Scanner sc = new Scanner(System.in);
     private final Student student;
+    private final Integer term;
 
     public StudentController(Connection connection, Student student) {
         this.studentService = new StudentService(connection);
         this.courseService = new CourseService(connection);
+        this.termService = new TermService(connection);
         this.student = student;
+        this.term = termService.getCurrentTerm();
     }
 
     public void entry() {
@@ -77,9 +82,9 @@ public class StudentController {
     }
 
     private void viewPickedCourses() {
-        Map<Course,Double> courses = courseService.findAllByStudent(student);
+        Map<Course, Double> courses = courseService.findAllByStudent(student);
         courses.forEach((course, grade) -> {
-            if(grade != null){
+            if (grade != null) {
                 System.out.println(course + "\nGrade: " + grade);
             } else System.out.println(course + "\nProfessor haven't entered a grade for this course yet.");
         });
@@ -92,18 +97,16 @@ public class StudentController {
                 .filter(courseDoubleEntry -> courseDoubleEntry.getValue() != null)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        Map<Course, Double> unfinishedCourses = pickedCourses
+        List<Course> unfinishedCourses = new ArrayList<>(pickedCourses
                 .entrySet()
                 .stream()
-                .filter(courseDoubleEntry -> courseDoubleEntry.getValue() == null)
-                .collect(Collectors.toMap(Map.Entry::getKey, null));
+                .filter(a -> a.getValue() == null)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)).keySet());
 
-
-        List<Course> pickedForTermCourses = new ArrayList<>(unfinishedCourses.keySet());
 
         AtomicReference<Integer> unitsPicked = new AtomicReference<>(0);
-        if (pickedForTermCourses.size() > 0) {
-            pickedForTermCourses.forEach(course -> unitsPicked.updateAndGet(v -> v + (course.getUnits())));
+        if (unfinishedCourses.size() > 0) {
+            unfinishedCourses.forEach(course -> unitsPicked.updateAndGet(v -> v + (course.getUnits())));
         }
 
         AtomicReference<Double> gradeSum = null;
@@ -114,7 +117,7 @@ public class StudentController {
             });
         }
         assert false;
-        if(pickedForTermCourses.size() > 0 && finishedCourses.size() > 0) {
+        if (unfinishedCourses.size() > 0 && finishedCourses.size() > 0) {
             double averageGrade = gradeSum.get() / unitsPicked.get();
 
             int pickingThreshold;
@@ -126,7 +129,7 @@ public class StudentController {
         } else return true;
     }
 
-    private void changePassword(){
+    private void changePassword() {
         System.out.println("Old Password: ");
         String oldPass = sc.nextLine();
         System.out.println("New Password: ");
@@ -134,7 +137,7 @@ public class StudentController {
         if (student.getPassword().equals(oldPass)) {
             student.setPassword(newPass);
             Integer changePassID = studentService.editProfile(student);
-            if(changePassID != null) System.out.println("Password changed successfully.");
+            if (changePassID != null) System.out.println("Password changed successfully.");
             else System.out.println("Something went wrong with database");
         } else System.out.println("Old Password was Wrong.");
     }

@@ -1,6 +1,7 @@
 package services;
 
 import models.things.Course;
+import models.users.Professor;
 import models.users.Student;
 import repos.CourseRep;
 import repos.CourseToStudentRep;
@@ -27,6 +28,10 @@ public class CourseService extends BaseService {
         return courseRep.insWithoutProf(course);
     }
 
+    public void insertGradeForStudent(Double grade,Course course,Student student) {
+        courseToStudentRep.insGrade(grade,course,student);
+    }
+
     public Course find(Integer id) {
         return courseRep.read(id);
     }
@@ -35,11 +40,16 @@ public class CourseService extends BaseService {
         return courseRep.readAll();
     }
 
-    public HashMap<Course,Double> findAllByStudent(Student student) {
+    public List<Course> findAllByProfessor(Professor professor) {
+        return courseRep.readAllByProfessor(professor);
+    }
+
+    public HashMap<Course, Double> findAllByStudent(Student student) {
         return courseRep.readAllByStudent(student);
     }
-    public void pickCourse(Course course,Student student){
-        courseToStudentRep.ins(course,student);
+
+    public void pickCourse(Course course, Student student) {
+        courseToStudentRep.ins(course, student);
     }
 
     public Integer editCourse(Course course) {

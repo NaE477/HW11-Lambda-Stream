@@ -35,6 +35,7 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
                                 rs.getString("prof_password"),
                                 ProfPosition.valueOf(rs.getString("prof_position"))
                         )
+                        , rs.getInt("term")
                 );
             }
         } catch (SQLException e) {
@@ -60,7 +61,8 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
                                         rs.getString("prof_username"),
                                         rs.getString("prof_password"),
                                         ProfPosition.valueOf(rs.getString("prof_position"))
-                                )
+                                ),
+                                rs.getInt("term")
                         )
                 );
             }
@@ -121,7 +123,9 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
     }
 
     public List<Course> readAll() {
-        String readStmt = "SELECT * FROM courses;";
+        String readStmt = "SELECT courses.* FROM courses" +
+                " INNER JOIN term t on courses.term = t.term" +
+                " WHERE courses.term = t.term;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             return mapToList(ps.executeQuery());
@@ -131,8 +135,21 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
         return null;
     }
 
-    public HashMap<Course,Double> readAllByStudent(Student student) {
-        HashMap<Course,Double> courseWithGrade = new HashMap<>();
+    public List<Course> readAllByProfessor(Professor professor) {
+        String readStmt = "SELECT courses.* FROM courses " +
+                "WHERE prof_id = ?;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            ps.setInt(1,professor.getId());
+            return mapToList(ps.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public HashMap<Course, Double> readAllByStudent(Student student) {
+        HashMap<Course, Double> courseWithGrade = new HashMap<>();
         String readStmt = "SELECT c.*,grade FROM course_to_student " +
                 "INNER JOIN students s on s.student_id = course_to_student.student_id " +
                 "INNER JOIN courses c on c.course_id = course_to_student.course_id " +
@@ -141,7 +158,7 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             ps.setInt(1, student.getId());
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 courseWithGrade.put(
                         new Course(
                                 rs.getInt("course_id"),
@@ -154,7 +171,8 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
                                         rs.getString("prof_username"),
                                         rs.getString("prof_password"),
                                         ProfPosition.valueOf(rs.getString("prof_position"))
-                                )
+                                ),
+                                rs.getInt("term")
                         ),
                         rs.getDouble("grade")
                 );

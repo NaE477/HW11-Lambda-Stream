@@ -5,10 +5,7 @@ import models.users.Clerk;
 import models.users.ProfPosition;
 import models.users.Professor;
 import models.users.Student;
-import services.ClerkService;
-import services.CourseService;
-import services.ProfessorService;
-import services.StudentService;
+import services.*;
 
 import java.sql.Connection;
 import java.util.*;
@@ -18,6 +15,8 @@ public class ClerkController {
     private final ProfessorService professorService;
     private final StudentService studentService;
     private final CourseService courseService;
+    private final TermService termService;
+    private final Integer term;
     private final Clerk clerk;
     private final Scanner sc = new Scanner(System.in);
 
@@ -26,7 +25,9 @@ public class ClerkController {
         this.professorService = new ProfessorService(connection);
         this.studentService = new StudentService(connection);
         this.courseService = new CourseService(connection);
+        this.termService = new TermService(connection);
         this.clerk = clerk;
+        term = termService.getCurrentTerm();
     }
 
     public void entry() {
@@ -46,6 +47,7 @@ public class ClerkController {
             System.out.println("11-Delete Student");
             System.out.println("12-Delete Course");
             System.out.println("13-View Pay Check");
+            System.out.println("14-End Term");
             System.out.println("0-Exit");
             System.out.print("Option: ");
             String opt = sc.nextLine();
@@ -90,6 +92,16 @@ public class ClerkController {
                 case "13":
                     System.out.println(clerk.getSalary());
                     break;
+                case "14":
+                    System.out.println("Sure?(Y/N)");
+                    String yOrN = sc.nextLine().toUpperCase(Locale.ROOT);
+                    if (yOrN.equals("Y")) {
+                        termService.endTerm();
+                        System.out.println("Term Ended successfully.");
+                    } else {
+                        System.out.println("Cancelled.");
+                    }
+                    break;
                 case "0":
                     break label;
                 default:
@@ -133,12 +145,12 @@ public class ClerkController {
             Integer profID = Utilities.intReceiver();
             Professor professorToTeach = professorService.find(profID);
             if (professorToTeach != null) {
-                Course newCourse = new Course(0, units, courseName, professorToTeach);
+                Course newCourse = new Course(0, units, courseName, professorToTeach,term);
                 Integer courseID = courseService.createNewCourse(newCourse);
                 System.out.println("New Course Created with ID: " + courseID);
             }
         } else {
-            Course newCourse = new Course(0, units, courseName, null);
+            Course newCourse = new Course(0, units, courseName, null,term);
             Integer newCourseID = courseService.createNewCourseWithoutProfessor(newCourse);
             System.out.println("No Professor was added yet,new course created with ID: " + newCourseID);
         }

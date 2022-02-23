@@ -14,6 +14,7 @@ public class Course {
     Integer id,units;
     String courseName;
     Professor professor;
+    Integer term;
 
     @Override
     public boolean equals(Object o) {
@@ -26,5 +27,13 @@ public class Course {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId() +
+                ", Course Name: " + getCourseName() +
+                ", Professor: " + getProfessor().getFirstname() + " " + getProfessor().getLastname() +
+                ", Term: " + getTerm();
     }
 }

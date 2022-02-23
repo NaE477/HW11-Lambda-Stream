@@ -40,6 +40,7 @@ public class Entry {
                 clerkController.entry();
             } else if (user instanceof Professor) {
                 ProfessorController professorController = new ProfessorController(connection, (Professor) user);
+                professorController.entry();
             } else if (user instanceof Student) {
                 StudentController studentController = new StudentController(connection, (Student) user);
                 studentController.entry();

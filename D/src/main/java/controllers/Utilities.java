@@ -9,10 +9,10 @@ import java.util.Scanner;
 
 public class Utilities {
     static Scanner sc = new Scanner(System.in);
-    private static Connection connection = ConClass.getInstance().getConnection();
-    private static ClerkService clerkService = new ClerkService(connection);
-    private static ProfessorService professorService = new ProfessorService(connection);
-    private static StudentService studentService = new StudentService(connection);
+    private static final Connection connection = ConClass.getInstance().getConnection();
+    private static final ClerkService clerkService = new ClerkService(connection);
+    private static final ProfessorService professorService = new ProfessorService(connection);
+    private static final StudentService studentService = new StudentService(connection);
 
     public static String usernameReceiver() {
         while (true) {
@@ -30,11 +30,22 @@ public class Utilities {
         while (true) {
             try {
                 int output = Integer.parseInt(sc.nextLine());
-                if(output > 0) return output;
+                if (output > 0) return output;
                 else System.out.println("Enter a number bigger than 0");
             } catch (NumberFormatException e) {
                 System.out.println("Only numbers are allowed here.");
-                System.out.print("           ");
+            }
+        }
+    }
+
+    public static Double doubleReceiver() {
+        while (true) {
+            try {
+                double output = Double.parseDouble(sc.nextLine());
+                if (output > 0) return output;
+                else System.out.println("Enter a number bigger than 0");
+            } catch (NumberFormatException e) {
+                System.out.println("Only numbers are allowed here.");
             }
         }
     }

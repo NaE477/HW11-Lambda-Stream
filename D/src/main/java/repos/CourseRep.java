@@ -4,12 +4,14 @@ import models.things.Course;
 import models.users.Clerk;
 import models.users.ProfPosition;
 import models.users.Professor;
+import models.users.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CourseRep extends BaseRepository<Course> implements Repository<Course> {
@@ -123,6 +125,41 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             return mapToList(ps.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public HashMap<Course,Double> readAllByStudent(Student student) {
+        HashMap<Course,Double> courseWithGrade = new HashMap<>();
+        String readStmt = "SELECT c.*,grade FROM course_to_student " +
+                "INNER JOIN students s on s.student_id = course_to_student.student_id " +
+                "INNER JOIN courses c on c.course_id = course_to_student.course_id " +
+                "WHERE course_to_student.student_id = ?;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
+            ps.setInt(1, student.getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                courseWithGrade.put(
+                        new Course(
+                                rs.getInt("course_id"),
+                                rs.getInt("course_unit"),
+                                rs.getString("course_name"),
+                                new Professor(
+                                        rs.getInt("prof_id"),
+                                        rs.getString("prof_firstname"),
+                                        rs.getString("prof_lastname"),
+                                        rs.getString("prof_username"),
+                                        rs.getString("prof_password"),
+                                        ProfPosition.valueOf(rs.getString("prof_position"))
+                                )
+                        ),
+                        rs.getDouble("grade")
+                );
+            }
+            return courseWithGrade;
         } catch (SQLException e) {
             e.printStackTrace();
         }

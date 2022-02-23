@@ -1,7 +1,5 @@
-import controllers.ClerkController;
-import controllers.ConClass;
-import controllers.ProfessorController;
-import controllers.StudentController;
+package controllers;
+
 import models.users.Clerk;
 import models.users.Professor;
 import models.users.Student;
@@ -13,7 +11,7 @@ import services.StudentService;
 import java.sql.Connection;
 import java.util.*;
 
-public class Executions {
+public class Entry {
 
     static Scanner sc = new Scanner(System.in);
     static Connection connection = ConClass.getInstance().getConnection();
@@ -39,10 +37,12 @@ public class Executions {
         if (user != null) {
             if (user instanceof Clerk) {
                 ClerkController clerkController = new ClerkController(connection, (Clerk) user);
+                clerkController.entry();
             } else if (user instanceof Professor) {
                 ProfessorController professorController = new ProfessorController(connection, (Professor) user);
             } else if (user instanceof Student) {
                 StudentController studentController = new StudentController(connection, (Student) user);
+                studentController.entry();
             }
         } else System.out.println("Wrong Username/Password.");
     }

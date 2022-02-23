@@ -18,7 +18,7 @@ public class ClerkController {
     private final ProfessorService professorService;
     private final StudentService studentService;
     private final CourseService courseService;
-    private Clerk clerk;
+    private final Clerk clerk;
     private final Scanner sc = new Scanner(System.in);
 
     public ClerkController(Connection connection, Clerk clerk) {
@@ -47,6 +47,7 @@ public class ClerkController {
             System.out.println("12-Delete Course");
             System.out.println("13-View Pay Check");
             System.out.println("0-Exit");
+            System.out.print("Option: ");
             String opt = sc.nextLine();
 
             switch (opt) {
@@ -98,14 +99,14 @@ public class ClerkController {
         }
     }
 
-    public void addClerk() {
+    private void addClerk() {
         ArrayList<String> clerkInits = initialReceiver();
         Clerk clerkToSign = new Clerk(0, clerkInits.get(0), clerkInits.get(1), clerkInits.get(2), clerkInits.get(3));
         Integer newClerkId = clerkService.signUpClerk(clerkToSign);
         System.out.println("New Clerk Created with ID: " + newClerkId);
     }
 
-    public void addProfessor() {
+    private void addProfessor() {
         ArrayList<String> profInits = initialReceiver();
         ProfPosition profPosition = profPositionReceiver();
         Professor profToSign = new Professor(0, profInits.get(0), profInits.get(1), profInits.get(2), profInits.get(3), profPosition);
@@ -113,14 +114,14 @@ public class ClerkController {
         System.out.println("New Professor Created with ID: " + newProfID);
     }
 
-    public void addStudent() {
+    private void addStudent() {
         ArrayList<String> studentInits = initialReceiver();
         Student studentToSign = new Student(0, studentInits.get(0), studentInits.get(1), studentInits.get(2), studentInits.get(3));
         Integer newStudentId = studentService.signUpStudent(studentToSign);
         System.out.println("New Student Created with ID: " + newStudentId);
     }
 
-    public void addCourse() {
+    private void addCourse() {
         System.out.println("Course Name: ");
         String courseName = sc.nextLine();
         System.out.println("Course units: ");
@@ -143,7 +144,7 @@ public class ClerkController {
         }
     }
 
-    public void editClerk() {
+    private void editClerk() {
         List<Clerk> clerks = clerkService.findAll();
         clerks.forEach(System.out::println);
         System.out.println("Choose Clerk ID to edit: ");
@@ -182,7 +183,7 @@ public class ClerkController {
         } else System.out.println("Wrong ID");
     }
 
-    public void editProfessor() {
+    private void editProfessor() {
         List<Professor> professors = professorService.findAll();
         if (professors.size() > 0) {
             professors.forEach(System.out::println);
@@ -225,7 +226,7 @@ public class ClerkController {
         } else System.out.println("No Professors Added yet.");
     }
 
-    public void editStudent() {
+    private void editStudent() {
         List<Student> students = studentService.findAll();
         if (students.size() > 0) {
             students.forEach(System.out::println);
@@ -266,7 +267,7 @@ public class ClerkController {
         } else System.out.println("No Student Added yet.");
     }
 
-    public void editCourse() {
+    private void editCourse() {
         List<Course> courses = courseService.findAll();
         if (courses.size() > 0) {
             courses.forEach(System.out::println);
@@ -317,7 +318,7 @@ public class ClerkController {
         } else System.out.println("No Courses added yet");
     }
 
-    public void deleteClerk() {
+    private void deleteClerk() {
         List<Clerk> clerks = clerkService.findAll();
         clerks.forEach(System.out::println);
         System.out.println("Enter clerk ID to delete: ");
@@ -330,7 +331,7 @@ public class ClerkController {
         } else System.out.println("Wrong ID");
     }
 
-    public void deleteProfessor() {
+    private void deleteProfessor() {
         List<Professor> professors = professorService.findAll();
         professors.forEach(System.out::println);
         System.out.println("Professor ID: ");
@@ -343,7 +344,7 @@ public class ClerkController {
         } else System.out.println("Wrong ID");
     }
 
-    public void deleteStudent() {
+    private void deleteStudent() {
         List<Student> students = studentService.findAll();
         students.forEach(System.out::println);
         System.out.println("Student ID: ");
@@ -356,7 +357,7 @@ public class ClerkController {
         } else System.out.println("Wrong ID");
     }
 
-    public void deleteCourse() {
+    private void deleteCourse() {
         List<Course> courses = courseService.findAll();
         courses.forEach(System.out::println);
         System.out.println("Course ID: ");
@@ -369,7 +370,7 @@ public class ClerkController {
         } else System.out.println("Wrong ID");
     }
 
-    public ArrayList<String> initialReceiver() {
+    private ArrayList<String> initialReceiver() {
         System.out.println("Firstname: ");
         String firstname = sc.next();
         System.out.println("Lastname: ");
@@ -380,7 +381,7 @@ public class ClerkController {
         return new ArrayList<>(Arrays.asList(firstname, lastname, username, password));
     }
 
-    public ProfPosition profPositionReceiver() {
+    private ProfPosition profPositionReceiver() {
         System.out.println("Committee or Non-Committee(C/NC): ");
         while (true) {
             String cOrNc = sc.nextLine().toUpperCase(Locale.ROOT);

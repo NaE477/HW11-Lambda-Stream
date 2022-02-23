@@ -36,3 +36,13 @@ CREATE TABLE IF NOT EXISTS courses
 
     FOREIGN KEY (prof_id) REFERENCES professors(prof_id)
 );
+
+CREATE TABLE IF NOT EXISTS course_to_student
+(
+    course_id   INTEGER,
+    student_id  INTEGER,
+    grade       DOUBLE PRECISION,
+
+    FOREIGN KEY (course_id) REFERENCES courses(course_id),
+    FOREIGN KEY (student_id) REFERENCES students(student_id)
+);

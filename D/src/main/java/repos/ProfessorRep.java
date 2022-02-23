@@ -64,10 +64,10 @@ public class ProfessorRep extends BaseRepository<Professor> implements Repositor
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(insStmt);
             ps.setString(1,professor.getFirstname());
-            ps.setString(1,professor.getLastname());
-            ps.setString(1,professor.getUsername());
-            ps.setString(1,professor.getPassword());
-            ps.setString(1,professor.getProfPosition().toString());
+            ps.setString(2,professor.getLastname());
+            ps.setString(3,professor.getUsername());
+            ps.setString(4,professor.getPassword());
+            ps.setString(5,professor.getProfPosition().toString());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 return rs.getInt("prof_id");
@@ -122,6 +122,7 @@ public class ProfessorRep extends BaseRepository<Professor> implements Repositor
             ps.setString(3,professor.getUsername());
             ps.setString(4,professor.getPassword());
             ps.setString(5,professor.getProfPosition().toString());
+            ps.setInt(6,professor.getId());
             ps.executeUpdate();
             return professor.getId();
         } catch (SQLException e) {

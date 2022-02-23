@@ -148,12 +148,8 @@ public class ClerkController {
                 Course newCourse = new Course(0, units, courseName, professorToTeach,term);
                 Integer courseID = courseService.createNewCourse(newCourse);
                 System.out.println("New Course Created with ID: " + courseID);
-            }
-        } else {
-            Course newCourse = new Course(0, units, courseName, null,term);
-            Integer newCourseID = courseService.createNewCourseWithoutProfessor(newCourse);
-            System.out.println("No Professor was added yet,new course created with ID: " + newCourseID);
-        }
+            } else System.out.println("Wrong ID");
+        } else System.out.println("A Professor must be added first.");
     }
 
     private void editClerk() {
@@ -207,6 +203,7 @@ public class ClerkController {
                 while (true) {
                     System.out.println("1-Change Username");
                     System.out.println("2-Change Full Name");
+                    System.out.println("3-Change Committee Status");
                     System.out.println("0-Finish Editing");
                     System.out.print("Option: ");
                     String opt = sc.nextLine();
@@ -223,6 +220,12 @@ public class ClerkController {
                             String newLastName = sc.nextLine();
                             professor.setFirstname(newFirstName);
                             professor.setLastname(newLastName);
+                            break;
+                        case "3":
+                            if (professor.getProfPosition().equals(ProfPosition.C)) {
+                                professor.setProfPosition(ProfPosition.NC);
+                            } else professor.setProfPosition(ProfPosition.C);
+                            System.out.println("Professor Position Changed.");
                             break;
                         case "0":
                             Integer editID = professorService.editProfile(professor);
@@ -384,13 +387,13 @@ public class ClerkController {
 
     private ArrayList<String> initialReceiver() {
         System.out.println("Firstname: ");
-        String firstname = sc.next();
+        String firstname = sc.nextLine();
         System.out.println("Lastname: ");
-        String lastname = sc.next();
+        String lastname = sc.nextLine();
         String username = Utilities.usernameReceiver();
         System.out.println("Password: ");
         String password = sc.nextLine();
-        return new ArrayList<>(Arrays.asList(firstname, lastname, username, password));
+        return new ArrayList<>(Arrays.asList(firstname,lastname,username,password));
     }
 
     private ProfPosition profPositionReceiver() {

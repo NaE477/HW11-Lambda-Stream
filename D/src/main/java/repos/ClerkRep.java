@@ -92,7 +92,7 @@ public class ClerkRep extends BaseRepository<Clerk> implements Repository<Clerk>
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             ps.setString(1,username);
-            return  mapTo(ps.executeQuery());
+            return mapTo(ps.executeQuery());
         } catch (SQLException e) {
             e.printStackTrace();
         }

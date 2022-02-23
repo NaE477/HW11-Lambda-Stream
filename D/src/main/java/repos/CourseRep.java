@@ -75,30 +75,14 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
 
     @Override
     public Integer ins(Course course) {
-        String insStmt = "INSERT INTO courses (course_name, course_unit, prof_id) " +
-                "VALUES (?,?,?) RETURNING course_id;";
+        String insStmt = "INSERT INTO courses (course_name, course_unit, prof_id,term) " +
+                "VALUES (?,?,?,?) RETURNING course_id;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(insStmt);
             ps.setString(1, course.getCourseName());
             ps.setInt(2, course.getUnits());
             ps.setInt(3, course.getProfessor().getId());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("course_id");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Integer insWithoutProf(Course course) {
-        String insStmt = "INSERT INTO courses (course_name, course_unit) " +
-                "VALUES (?,?) RETURNING course_id;";
-        try {
-            PreparedStatement ps = super.getConnection().prepareStatement(insStmt);
-            ps.setString(1, course.getCourseName());
-            ps.setInt(2, course.getUnits());
+            ps.setInt(4, course.getTerm());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt("course_id");
@@ -111,7 +95,9 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
 
     @Override
     public Course read(Integer id) {
-        String readStmt = "SELECT * FROM courses WHERE course_id = ?;";
+        String readStmt = "SELECT * FROM courses " +
+                " INNER JOIN professors p on p.prof_id = courses.prof_id" +
+                " WHERE course_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             ps.setInt(1, id);
@@ -123,8 +109,9 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
     }
 
     public List<Course> readAll() {
-        String readStmt = "SELECT courses.* FROM courses" +
-                " INNER JOIN term t on courses.term = t.term" +
+        String readStmt = "SELECT courses.*,p.* FROM courses" +
+                " INNER JOIN term t on courses.term = t.term " +
+                " INNER JOIN professors p on p.prof_id = courses.prof_id" +
                 " WHERE courses.term = t.term;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
@@ -136,8 +123,9 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
     }
 
     public List<Course> readAllByProfessor(Professor professor) {
-        String readStmt = "SELECT courses.* FROM courses " +
-                "WHERE prof_id = ?;";
+        String readStmt = "SELECT courses.*,p.* FROM courses " +
+                " INNER JOIN professors p on p.prof_id = courses.prof_id " +
+                "WHERE courses.prof_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             ps.setInt(1,professor.getId());
@@ -150,10 +138,11 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
 
     public HashMap<Course, Double> readAllByStudent(Student student) {
         HashMap<Course, Double> courseWithGrade = new HashMap<>();
-        String readStmt = "SELECT c.*,grade FROM course_to_student " +
+        String readStmt = "SELECT c.*,p.*,grade FROM course_to_student " +
                 "INNER JOIN students s on s.student_id = course_to_student.student_id " +
                 "INNER JOIN courses c on c.course_id = course_to_student.course_id " +
-                "WHERE course_to_student.student_id = ?;";
+                "INNER JOIN professors p on p.prof_id = c.prof_id " +
+                " WHERE course_to_student.student_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             ps.setInt(1, student.getId());
@@ -213,5 +202,14 @@ public class CourseRep extends BaseRepository<Course> implements Repository<Cour
             e.printStackTrace();
         }
         return null;
+    }
+    public void delete(Professor professor){
+        String delStmt = "DELETE FROM courses WHERE prof_id = ?;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

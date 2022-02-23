@@ -5,14 +5,18 @@ import models.users.Student;
 import repos.StudentRep;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StudentService extends BaseService {
     private final StudentRep studentRep;
+    private final CourseService courseService;
 
     public StudentService(Connection connection) {
         super(connection);
         studentRep = new StudentRep(super.getConnection());
+        courseService = new CourseService(super.getConnection());
     }
 
     public Integer signUpStudent(Student student) {
@@ -22,7 +26,11 @@ public class StudentService extends BaseService {
         return studentRep.read(studentId);
     }
     public Student find(String username){
-        return studentRep.read(username);
+        Student student = studentRep.read(username);
+        if(student != null) {
+            student.setCourses(new ArrayList<>(courseService.findAllByStudent(student).keySet()));
+        }
+        return student;
     }
     public List<Student> findAll(){
         return studentRep.readAll();

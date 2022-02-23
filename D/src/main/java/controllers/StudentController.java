@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class StudentController {
     private final StudentService studentService;
     private final CourseService courseService;
-    private final TermService termService;
     private final Scanner sc = new Scanner(System.in);
     private final Student student;
     private final Integer term;
@@ -22,7 +21,7 @@ public class StudentController {
     public StudentController(Connection connection, Student student) {
         this.studentService = new StudentService(connection);
         this.courseService = new CourseService(connection);
-        this.termService = new TermService(connection);
+        TermService termService = new TermService(connection);
         this.student = student;
         this.term = termService.getCurrentTerm();
     }
@@ -76,6 +75,7 @@ public class StudentController {
             if (!pickedCourses.containsKey(courseToPick)) {
                 if (canPick(courseToPick, pickedCourses)) {
                     courseService.pickCourse(courseToPick, student);
+                    System.out.println("Course picked successfully");
                 } else System.out.println("You Can't Pick this course.Your unit threshold is filled.");
             } else System.out.println("Already Picked");
         } else System.out.println("Wrong ID");
@@ -84,7 +84,7 @@ public class StudentController {
     private void viewPickedCourses() {
         Map<Course, Double> courses = courseService.findAllByStudent(student);
         courses.forEach((course, grade) -> {
-            if (grade != null) {
+            if (grade != 0) {
                 System.out.println(course + "\nGrade: " + grade);
             } else System.out.println(course + "\nProfessor haven't entered a grade for this course yet.");
         });
@@ -94,13 +94,13 @@ public class StudentController {
         Map<Course, Double> finishedCourses = pickedCourses
                 .entrySet()
                 .stream()
-                .filter(courseDoubleEntry -> courseDoubleEntry.getValue() != null)
+                .filter(courseDoubleEntry -> !Objects.equals(courseDoubleEntry.getKey().getTerm(), term))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         List<Course> unfinishedCourses = new ArrayList<>(pickedCourses
                 .entrySet()
                 .stream()
-                .filter(a -> a.getValue() == null)
+                .filter(a -> Objects.equals(a.getKey().getTerm(), term))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)).keySet());
 
 
@@ -109,16 +109,25 @@ public class StudentController {
             unfinishedCourses.forEach(course -> unitsPicked.updateAndGet(v -> v + (course.getUnits())));
         }
 
-        AtomicReference<Double> gradeSum = null;
+        AtomicReference<Double> gradeSum = new AtomicReference<>(0.0);
         if (finishedCourses.size() > 0) {
             finishedCourses.forEach((course, grade) -> {
                 assert false;
                 gradeSum.updateAndGet(v -> v + course.getUnits() * grade);
             });
         }
+
+        AtomicReference<Integer> unitsPasses = new AtomicReference<>(0);
+        if(finishedCourses.size() > 0){
+            finishedCourses.forEach((course,grade) -> {
+                assert false;
+                unitsPasses.updateAndGet(v -> v + course.getUnits());
+            });
+        }
+
         assert false;
         if (unfinishedCourses.size() > 0 && finishedCourses.size() > 0) {
-            double averageGrade = gradeSum.get() / unitsPicked.get();
+            double averageGrade = gradeSum.get() / unitsPasses.get();
 
             int pickingThreshold;
             assert false;

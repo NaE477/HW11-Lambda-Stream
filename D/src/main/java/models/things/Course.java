@@ -34,6 +34,7 @@ public class Course {
         return "ID: " + getId() +
                 ", Course Name: " + getCourseName() +
                 ", Professor: " + getProfessor().getFirstname() + " " + getProfessor().getLastname() +
+                ", Unit:" + getUnits() +
                 ", Term: " + getTerm();
     }
 }

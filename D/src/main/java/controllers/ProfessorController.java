@@ -73,20 +73,25 @@ public class ProfessorController {
         Course course = courseService.find(courseID);
         if (course != null && courses.contains(course)) {
             List<Student> students = studentService.findAll(course);
-            System.out.println("Enter Student ID: ");
-            Integer studentID = Utilities.intReceiver();
-            Student student = studentService.find(studentID);
-            if (student != null && students.contains(student)) {
-                System.out.println("Enter Grade: ");
-                Double grade = gradeReceiver();
-                courseService.insertGradeForStudent(grade, course, student);
-                System.out.println("Grade inserted for student");
-            } else System.out.println("Wrong ID");
+            if (students.size() > 0) {
+                students.forEach(System.out::println);
+                System.out.println("Enter Student ID: ");
+                Integer studentID = Utilities.intReceiver();
+                Student student = studentService.find(studentID);
+                if (student != null && students.contains(student)) {
+                    if (courseService.findAllByStudent(student).get(course) == 0) {
+                        System.out.println("Enter Grade: ");
+                        Double grade = gradeReceiver();
+                        courseService.insertGradeForStudent(grade, course, student);
+                        System.out.println("Grade inserted for student");
+                    } else System.out.println("Grade already inserted for student");
+                } else System.out.println("Wrong ID");
+            } else System.out.println("No Students for this course yet");
         } else System.out.println("Wrong ID");
     }
 
-    private Double getSalary(Integer term) {
-        AtomicReference<Double> salary = new AtomicReference<>((double) 0);
+    private Long getSalary(Integer term) {
+        AtomicReference<Long> salary = new AtomicReference<>((long) 0);
         List<Course> termCourses = professor
                 .getCourses()
                 .stream()
@@ -95,11 +100,11 @@ public class ProfessorController {
 
         termCourses
                 .stream()
-                .mapToDouble(Course::getUnits)
-                .forEach(unit -> salary.updateAndGet(v -> v + unit * 1000000.0));
+                .mapToLong(Course::getUnits)
+                .forEach(unit -> salary.updateAndGet(v -> v + unit * 1000000));
 
         if (professor.getProfPosition().equals(ProfPosition.C)) {
-            return salary.updateAndGet(v -> v + 5000000.0);
+            return salary.updateAndGet(v -> v + 5000000);
         } else {
             return salary.get();
         }
@@ -123,7 +128,7 @@ public class ProfessorController {
             Integer term = Utilities.intReceiver();
             if (term <= this.term && term > 0) {
                 return term;
-            } else System.out.println("Wrong term,Choose a term between: " + "0-" + this.term);
+            } else System.out.println("Wrong term,Choose a term between: " + "1-" + this.term);
         }
     }
 

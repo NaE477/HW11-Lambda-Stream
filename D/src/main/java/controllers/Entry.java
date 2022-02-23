@@ -17,8 +17,9 @@ public class Entry {
     static Connection connection = ConClass.getInstance().getConnection();
 
     public static void main(String[] args) {
-        System.out.println("Welcome to University App.\nEnter L/l to login or E/e to exit:");
+        System.out.println("Welcome to University App.\n");
         while (true) {
+            System.out.println("Enter L/l to login or E/e to exit:");
             String opt = sc.nextLine().toUpperCase(Locale.ROOT);
             if (opt.equals("L")) {
                 login();
@@ -52,9 +53,14 @@ public class Entry {
         ClerkService clerkService = new ClerkService(connection);
         ProfessorService professorService = new ProfessorService(connection);
         StudentService studentService = new StudentService(connection);
-        if (clerkService.find(username).getPassword().equals(password)) return clerkService.find(username);
-        else if (professorService.find(username).getPassword().equals(password)) return professorService.find(username);
-        else if (studentService.find(username).getPassword().equals(password)) return studentService.find(username);
+
+        Clerk probableClerk = clerkService.find(username);
+        Professor probableProfessor = professorService.find(username);
+        Student probableStudent = studentService.find(username);
+
+        if (probableClerk != null && probableClerk.getPassword().equals(password)) return probableClerk;
+        else if (probableProfessor != null && probableProfessor.getPassword().equals(password)) return probableProfessor;
+        else if (probableStudent != null && probableStudent.getPassword().equals(password)) return probableStudent;
         else return null;
     }
 

@@ -1,13 +1,12 @@
 package repos;
 
 import models.things.Course;
+import models.users.Professor;
 import models.users.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public class CourseToStudentRep {
     private final Connection connection;
@@ -63,5 +62,17 @@ public class CourseToStudentRep {
         }
     }
 
+    public void del(Professor professor) {
+        for(Course course : professor.getCourses()) {
+            String delStmt = "DELETE FROM course_to_student WHERE course_id = ? AND grade IS NULL;";
+            try {
+                PreparedStatement ps = connection.prepareStatement(delStmt);
+                ps.setInt(1,course.getId());
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
+        }
+    }
 }

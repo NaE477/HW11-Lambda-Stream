@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS clerks
     clerk_password  VARCHAR(50),
     clerk_salary    DOUBLE PRECISION
 );
+INSERT INTO clerks (clerk_firstname, clerk_lastname, clerk_username, clerk_password, clerk_salary)
+VALUES ('admin','admin','admin','admin',2000000);
 
 CREATE TABLE IF NOT EXISTS professors
 (
@@ -52,3 +54,4 @@ CREATE TABLE IF NOT EXISTS term
 (
     term    INTEGER
 );
+INSERT INTO term (term) VALUES (1);

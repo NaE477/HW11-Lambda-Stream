@@ -24,10 +24,6 @@ public class CourseService extends BaseService {
         return courseRep.ins(course);
     }
 
-    public Integer createNewCourseWithoutProfessor(Course course) {
-        return courseRep.insWithoutProf(course);
-    }
-
     public void insertGradeForStudent(Double grade,Course course,Student student) {
         courseToStudentRep.insGrade(grade,course,student);
     }

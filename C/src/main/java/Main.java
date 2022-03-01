@@ -60,6 +60,7 @@ public class Main {
         //3-
         Product minPriceProduct = products
                 .stream()
+                .filter(product -> product.getCategory().getCatName().equals("Electronics"))
                 .min(Comparator.comparing(Product::getPrice))
                 .orElseThrow(NoSuchElementException::new);
         System.out.println(minPriceProduct);
@@ -83,10 +84,9 @@ public class Main {
     }
 
     public static Double orderPriceCalc(HashMap<Product, Integer> products) {
-        AtomicReference<Double> avg = new AtomicReference<>(0.d);
+        AtomicReference<Double> totalPrice = new AtomicReference<>(0.d);
         products.entrySet()
-                .forEach((product -> avg.updateAndGet(v -> v + product.getKey().getPrice() * product.getValue())));
-        return avg.get();
+                .forEach((product -> totalPrice.updateAndGet(v -> v + product.getKey().getPrice() * product.getValue())));
+        return totalPrice.get();
     }
-
 }

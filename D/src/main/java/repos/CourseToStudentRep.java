@@ -63,16 +63,17 @@ public class CourseToStudentRep {
     }
 
     public void del(Professor professor) {
-        for(Course course : professor.getCourses()) {
-            String delStmt = "DELETE FROM course_to_student WHERE course_id = ? AND grade IS NULL;";
-            try {
-                PreparedStatement ps = connection.prepareStatement(delStmt);
-                ps.setInt(1,course.getId());
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        if(professor.getCourses() != null) {
+            for (Course course : professor.getCourses()) {
+                String delStmt = "DELETE FROM course_to_student WHERE course_id = ? AND grade IS NULL;";
+                try {
+                    PreparedStatement ps = connection.prepareStatement(delStmt);
+                    ps.setInt(1, course.getId());
+                    ps.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-
         }
     }
 }

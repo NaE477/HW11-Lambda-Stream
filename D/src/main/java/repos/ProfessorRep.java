@@ -133,6 +133,15 @@ public class ProfessorRep extends BaseRepository<Professor> implements Repositor
 
     @Override
     public Integer delete(Professor professor) {
+        String delStmt = "DELETE FROM professors WHERE prof_id = ?;";
+        try {
+            PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
+            ps.setInt(1,professor.getId());
+            ps.executeUpdate();
+            return professor.getId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

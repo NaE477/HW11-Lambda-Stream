@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS courses
     prof_id     INTEGER,
     term        INTEGER,
 
-    FOREIGN KEY (prof_id) REFERENCES professors(prof_id)
+    FOREIGN KEY (prof_id) REFERENCES professors(prof_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS course_to_student
